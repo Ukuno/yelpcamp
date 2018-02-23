@@ -63,6 +63,6 @@ app.use("/campgrounds/:id/comments",commentsRoutes);
 app.use("/user", userRoutes);
 
 
-app.listen(8080 || process.env.PORT, process.env.IP, function(){
+app.listen(process.env.PORT, process.env.IP, function(){
     console.log("its Live");
 });
