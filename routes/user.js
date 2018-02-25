@@ -43,7 +43,7 @@ router.get("/:id/edit",middlewareObj.isLoggedIn,function(req, res){
 router.put("/:id", middlewareObj.isLoggedIn, function(req, res){
    User.findByIdAndUpdate(req.params.id, req.body.user, (err, updatedUser) => {
     if (err) {
-      if (err.name === 'MongoError' && err.code === 11000) {
+      if (err.name === 'MongoError' || err.code === 11000) {
         // Duplicate email
         req.flash("error", "That email has already been registered.");
         return res.redirect("/user/" + req.params.id);

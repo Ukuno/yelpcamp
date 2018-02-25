@@ -33,6 +33,11 @@ router.post("/register", function(req, res){
     }
     User.register(newUser, req.body.password, function(err , user){
         if(err){
+          if (err.name === 'MongoError' || err.code === 11000) {
+              // Duplicate email
+              req.flash("error", "That email has already been registered.");
+              return res.redirect("register");
+            } 
             req.flash("error", err.message);
             return res.redirect("register");
         }
