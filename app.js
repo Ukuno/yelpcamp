@@ -5,7 +5,6 @@ var mongoose = require("mongoose");
 var Campgrounds = require("./models/camps");
 var path = require("path");
 var flash = require("connect-flash");
-// var seedDB = require("./seeds");
 var Comment = require("./models/comments");
 var passport = require("passport");
 var LocalStrategy = require("passport-local");
@@ -20,8 +19,7 @@ var campgroundRoutes = require("./routes/campgrounds");
 var indexRoutes = require("./routes/index");
 var userRoutes = require("./routes/user");
 
-// seedDB();
-//"mongodb://localhost/yelp_camp-v1"
+
 var url = process.env.DATABASEURL || "mongodb://localhost/yelp_camp-v1";
 mongoose.connect(url);
 
