@@ -1,17 +1,12 @@
 <% include ../partials/header %>
 
-<div class="container">
+<div class="container show">
     <div class="row">
-        <div class="col-md-3">
-            <h4 >Yelp Camp</h4>
-             <div class="list-group">
-                <li class="list-group-item active">item 1</li>
-                <li class="list-group-item">item 2</li>
-                <li class="list-group-item">item 3</li>
-            </div>
-            <div id="map"></div>
+        <div class="col-md-2">
+            
+            <!-- <div id="map"></div> -->
         </div>
-        <div class="col-md-9">
+        <div class="col-md-8">
             <div class="thumbnail">
                 <img class="img-responsive" src="<%= camps.image %>" />
                 <div class="caption-full">
@@ -32,7 +27,7 @@
                         </form>
                    <% } %>
                 </div>
-               
+               <div id="map"></div>
             </div>
             
             <!--COMMENT SECTION START-->
@@ -133,6 +128,9 @@
     <!--COMMENT SECTION END-->
 
            
+        </div>
+        <div class="col-md-2">
+          
         </div>
         
     </div>
