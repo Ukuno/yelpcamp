@@ -61,6 +61,15 @@ h1{
 .show{
     margin-top: 20px;
 }
+#form-log {
+    width:30%; 
+    margin: 25px auto;
+}
 
+@media only screen and (max-width: 600px)  {
+    #form-log {
+        width: 60%;
+    }
+}
 
 

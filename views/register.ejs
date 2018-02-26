@@ -3,25 +3,31 @@
 <div class="container">
     <div class="row">
         
-        <div style="width:30%; margin: 25px auto;">
+        <div id="form-log">
             <legend>Sign Up to YelpCamp</legend>
              <form action="/register" method= "post">
                  <div class="form-group">
+                    <label for="firstname">First Name</label>
                      <input class="form-control" type="text" name="firstname" placeholder="John" />
                  </div>
                  <div class="form-group">
+                    <label for="lastname">Last Name</label>
                      <input class="form-control" type="text" name="lastname" placeholder="Smith" />
                  </div>
                  <div class="form-group">
+                    <label for="username">User Name</label>
                      <input class="form-control" type="text" name="username" placeholder="username" />
                  </div>
                  <div class="form-group">
+                    <label for="password">Password</label>
                      <input class="form-control" type="password" name="password" placeholder="password" />
                  </div>
                  <div class="form-group">
+                    <label for="email">Email</label>
                      <input class="form-control" type="email" name="email" placeholder="john@gmail.com" />
                  </div>
                  <div class="form-group">
+                    <label for="avatar">Avatar</label>
                      <input class="form-control" type="text" name="avatar" placeholder="avatar-image-url" />
                  </div>
                  <div class="form-group">
@@ -29,6 +35,9 @@
                  </div>
                     
              </form>
+
+          <small>if you already have an account please <a href="/login">login</a></small>
+
         </div>
         
     </div>
