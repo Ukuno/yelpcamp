@@ -4,7 +4,7 @@ var Campgrounds = require("../models/camps");
 var middlewareObj = require("../middleware");
 var geocoder = require("geocoder");
 
-var GOOGLEAPIKEY = GOOGLEAPIKEY;
+
 
 function escapeRegex(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
@@ -110,7 +110,7 @@ router.get("/:id", function(req,res){
           res.redirect("/campgrounds");
           console.log(err);
       }else{
-        res.render("campgrounds/show", {camps : camp, GOOGLEAPIKEY});  
+        res.render("campgrounds/show", {camps : camp});  
       }
   });
     
