@@ -1,35 +1,35 @@
-var express = require("express");
-var router  = express.Router({mergeParams: true});
-var Campgrounds = require("../models/camps");
-var Comment = require("../models/comments");
-var middlewareObj = require("../middleware");
+const express = require("express"),
+      router  = express.Router({mergeParams: true}),
+  Campgrounds = require("../models/camps"),
+      Comment = require("../models/comments"),
+middlewareObj = require("../middleware");
 
 
 
 
 
-router.get("/new",middlewareObj.isLoggedIn, function(req,res){
-    Campgrounds.findById(req.params.id, function(err,camp){
-        if(err || !camp){
-            req.flash("error", "Something went wrong");
-            console.log(err);
-        }else{
-            res.render("comments/new", {camp: camp});
-        }
-    });
+// router.get("/new",middlewareObj.isLoggedIn, (req,res) => {
+//     Campgrounds.findById(req.params.id, (err,camp) => {
+//         if(err || !camp){
+//             req.flash("error", "Something went wrong");
+//             console.log(err);
+//         }else{
+//             res.render("comments/new", {camp: camp});
+//         }
+//     });
     
-});
+// });
 
 
-router.post("/",middlewareObj.isLoggedIn, function(req,res){
+router.post("/",middlewareObj.isLoggedIn, (req,res) => {
    
-   Campgrounds.findById(req.params.id, function(err,camp){
+   Campgrounds.findById(req.params.id, (err,camp) => {
    
        if(err || !camp){
            req.flash("error", "Something went wrong");
            console.log(err);
        }else{
-           Comment.create(req.body.comment, function(err, comment){
+           Comment.create(req.body.comment, (err, comment) => {
                if(err){
                    req.flash("error", "OOPS something went wrong");
                    console.log(err);
@@ -48,27 +48,27 @@ router.post("/",middlewareObj.isLoggedIn, function(req,res){
     
 });
 
-router.get("/:comment_id/edit", middlewareObj.checkCommentOwnership, function(req, res){
-    Campgrounds.findById(req.params.id, function(err, camp){
-       if(err || !camp){
-           req.flash("error", "OOPS the campground doesnot exists");
-           return res.redirect("back");
-       } 
+// router.get("/:comment_id/edit", middlewareObj.checkCommentOwnership, (req, res) => {
+//     Campgrounds.findById(req.params.id, (err, camp) => {
+//        if(err || !camp){
+//            req.flash("error", "OOPS the campground doesnot exists");
+//            return res.redirect("back");
+//        } 
        
-       Comment.findById(req.params.comment_id, function(err, comment) {
-            if(err || !comment){
-                  res.redirect("back");
-              }else{
-                  res.render("comments/edit",{ campground_id : req.params.id , comment : comment});
-              }
-          });
-    });
+//        Comment.findById(req.params.comment_id, (err, comment) => {
+//             if(err || !comment){
+//                   res.redirect("back");
+//               }else{
+//                   res.render("comments/edit",{ campground_id : req.params.id , comment : comment});
+//               }
+//           });
+//     });
   
 
-});
+// });
 
-router.put("/:comment_id", middlewareObj.checkCommentOwnership, function(req,res){
-    Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(err, updatedcomment){
+router.put("/:comment_id", middlewareObj.checkCommentOwnership, (req,res) => {
+    Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, (err, updatedcomment) => {
       if(err){
           req.flash("error", "OOPS something went wrong");
           res.redirect("back");
@@ -80,8 +80,8 @@ router.put("/:comment_id", middlewareObj.checkCommentOwnership, function(req,res
     
 });
 
-router.delete("/:comment_id", middlewareObj.checkCommentOwnership, function(req, res){
-   Comment.findByIdAndRemove(req.params.comment_id, function(err){
+router.delete("/:comment_id", middlewareObj.checkCommentOwnership, (req, res) => {
+   Comment.findByIdAndRemove(req.params.comment_id, (err) => {
        if(err){
            req.flash("error", "OOPS something went wrong");
            res.redirect("back");

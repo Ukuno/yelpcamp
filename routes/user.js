@@ -1,19 +1,19 @@
-var express = require("express");
-var router  = express.Router();
-var User = require("../models/user");
-var middlewareObj = require("../middleware");
-var Campgrounds = require("../models/camps");
+const express = require("express"),
+      router  = express.Router(),
+         User = require("../models/user"), 
+middlewareObj = require("../middleware"),
+  Campgrounds = require("../models/camps");
 
 
 
-router.get("/:id", function(req, res){
-    User.findById(req.params.id, function(err, foundUser){
+router.get("/:id", (req, res) => {
+    User.findById(req.params.id, (err, foundUser) => {
         if(err && !foundUser){
             req.flash("error", "the user does not exists");
             res.redirect("/campgrounds");
         }else{
             
-            Campgrounds.find().where("author.id").equals(foundUser._id).exec(function(err, camps){
+            Campgrounds.find().where("author.id").equals(foundUser._id).exec((err, camps) => {
                 if(err){
                     console.log(err);
                      req.flash("error", "the user does not exists");
@@ -27,8 +27,8 @@ router.get("/:id", function(req, res){
    
 });
 
-router.get("/:id/edit",middlewareObj.isLoggedIn,function(req, res){
-    User.findById(req.params.id, function(err, foundUser){
+router.get("/:id/edit",middlewareObj.isLoggedIn,(req, res) => {
+    User.findById(req.params.id, (err, foundUser) => {
     if (err || !foundUser) { return res.redirect("back"); }
     if (foundUser._id.equals(req.user._id)) {
       res.render("user/edit", { user: foundUser }); 
@@ -40,7 +40,7 @@ router.get("/:id/edit",middlewareObj.isLoggedIn,function(req, res){
 });
 
 
-router.put("/:id", middlewareObj.isLoggedIn, function(req, res){
+router.put("/:id", middlewareObj.isLoggedIn, (req, res) => {
    User.findByIdAndUpdate(req.params.id, req.body.user, (err, updatedUser) => {
     if (err) {
       if (err.name === 'MongoError' || err.code === 11000) {

@@ -1,26 +1,26 @@
-var express = require("express");
-var router  = express.Router();
-var passport = require("passport");
-var User = require("../models/user");
-var Campgrounds = require("../models/camps");
-var async      = require("async");
-var nodemailer = require("nodemailer");
-var crypto     = require("crypto");
+const express = require("express"),
+      router  = express.Router(),
+     passport = require("passport"),
+         User = require("../models/user"),
+  Campgrounds = require("../models/camps"),
+        async = require("async"),
+   nodemailer = require("nodemailer"),
+       crypto = require("crypto");
 
 
 
 
-router.get("/", function(req ,res){
+router.get("/", (req ,res) => {
    res.render("landing");
     
 });
 
 
-router.get("/register", function(req,res){
+router.get("/register", (req,res) => {
     res.render("register", {page: 'register'});
 });
 
-router.post("/register", function(req, res){
+router.post("/register", (req, res) =>{
     var newUser = new User({
         username : req.body.username , 
         firstName : req.body.firstname, 
@@ -31,7 +31,7 @@ router.post("/register", function(req, res){
     if(req.body.admin_pw === process.env.ADMIN){
         newUser.isAdmin = true;
     }
-    User.register(newUser, req.body.password, function(err , user){
+    User.register(newUser, req.body.password, (err , user) => {
         if(err){
           if (err.name === 'MongoError' || err.code === 11000) {
               // Duplicate email
@@ -41,7 +41,7 @@ router.post("/register", function(req, res){
             req.flash("error", err.message);
             return res.redirect("register");
         }
-        passport.authenticate("local")(req,res,function(){
+        passport.authenticate("local")(req,res,() => {
             req.flash("success", "Welcome to YelpCamp " + user.username.toUpperCase());
             res.redirect("/campgrounds");
         });
@@ -49,10 +49,10 @@ router.post("/register", function(req, res){
 });
 
 
-router.get("/admin", function(req, res){
+router.get("/admin", (req, res) => {
     res.render("admin");
 });
-router.get("/login",function(req, res){
+router.get("/login",(req, res) => {
     res.render("login", {page: 'login'});
 });
 
@@ -61,14 +61,14 @@ router.post("/login", passport.authenticate("local",
         successRedirect : "/campgrounds",
         failureRedirect : "/login",
         failureFlash: true
-    }),function(req,res){
+    }),(req,res) => {
         
 });
 
 
 
 
-router.get("/logout", function(req,res){
+router.get("/logout", (req,res) => {
    req.logout();
    req.flash("success", "logged you out successfully");
    res.redirect("/login");
@@ -77,20 +77,20 @@ router.get("/logout", function(req,res){
 
 
 
-router.get("/forgot", function(req, res){
+router.get("/forgot", (req, res) => {
    res.render("forgot");
 });
 
-router.post('/forgot', function(req, res, next) {
+router.post('/forgot', (req, res, next) => {
   async.waterfall([
     function(done) {
-      crypto.randomBytes(20, function(err, buf) {
+      crypto.randomBytes(20, (err, buf) => {
         var token = buf.toString('hex');
         done(err, token);
       });
     },
     function(token, done) {
-      User.findOne({ email: req.body.email }, function(err, user) {
+      User.findOne({ email: req.body.email }, (err, user) => {
         if (err || !user) {
           req.flash('error', 'No account with that email address exists.');
           return res.redirect('/forgot');
@@ -99,7 +99,7 @@ router.post('/forgot', function(req, res, next) {
         user.resetPasswordToken = token;
         user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
 
-        user.save(function(err) {
+        user.save((err) =>{
           done(err, token, user);
         });
       });
@@ -121,20 +121,20 @@ router.post('/forgot', function(req, res, next) {
           'http://' + req.headers.host + '/reset/' + token + '\n\n' +
           'If you did not request this, please ignore this email and your password will remain unchanged.\n'
       };
-      smtpTransport.sendMail(mailOptions, function(err) {
+      smtpTransport.sendMail(mailOptions, (err) => {
         console.log('mail sent');
         req.flash('success', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
         done(err, 'done');
       });
     }
-  ], function(err) {
+  ], (err) =>  {
     if (err) return next(err);
     res.redirect('/forgot');
   });
 });
 
-router.get('/reset/:token', function(req, res) {
-  User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
+router.get('/reset/:token', (req, res) => {
+  User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, (err, user) => {
     if (err || !user) {
       req.flash('error', 'Password reset token is invalid or has expired.');
       return res.redirect('/forgot');
@@ -143,16 +143,16 @@ router.get('/reset/:token', function(req, res) {
   });
 });
 
-router.post('/reset/:token', function(req, res) {
+router.post('/reset/:token', (req, res) => {
   async.waterfall([
     function(done) {
-      User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
+      User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, (err, user) => {
         if (err || !user) {
           req.flash('error', 'Password reset token is invalid or has expired.');
           return res.redirect('back');
         }
         if(req.body.password === req.body.confirm) {
-          user.setPassword(req.body.password, function(err) {
+          user.setPassword(req.body.password, (err) => {
               if(err){
                   req.flash("error", "Passwords do not match.");
                   return res.redirect('back');
@@ -160,12 +160,12 @@ router.post('/reset/:token', function(req, res) {
             user.resetPasswordToken = undefined;
             user.resetPasswordExpires = undefined;
 
-            user.save(function(err) {
+            user.save((err) =>{
                 if(err){
                     req.flash("error", "Passwords is no saved.");
                      return res.redirect('back');
                 }
-              req.logIn(user, function(err) {
+              req.logIn(user, (err) => {
                 done(err, user);
               });
             });
@@ -191,7 +191,7 @@ router.post('/reset/:token', function(req, res) {
         text: 'Hello,\n\n' +
           'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
       };
-      smtpTransport.sendMail(mailOptions, function(err) {
+      smtpTransport.sendMail(mailOptions, (err) => {
         req.flash('success', 'Success! Your password has been changed.');
         done(err);
       });
