@@ -1,8 +1,8 @@
-var express = require("express");
-var router  = express.Router();
-var Campgrounds = require("../models/camps");
-var middlewareObj = require("../middleware");
-var geocoder = require("geocoder");
+const express = require("express"),
+      router  = express.Router(),
+  Campgrounds = require("../models/camps"),
+middlewareObj = require("../middleware"),
+     geocoder = require("geocoder");
 
 
 
@@ -10,11 +10,11 @@ function escapeRegex(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 }
 
-router.get("/", function(req, res){
-    var perPage = 8;
-    var pageQuery = Number(req.query.page);
-    var pageNumber = pageQuery ? pageQuery : 1;
-    var noMatch = null;
+router.get("/", (req, res) => {
+    const perPage = 8,
+        pageQuery = Number(req.query.page),
+       pageNumber = pageQuery ? pageQuery : 1,
+          noMatch = null;
     if(req.query.search) {
         const regex = new RegExp(escapeRegex(req.query.search), 'gi');
         Campgrounds.find({location: regex}).skip((perPage * pageNumber) - perPage).limit(perPage).exec(function (err, allCampgrounds) {
@@ -63,27 +63,27 @@ router.get("/", function(req, res){
 });
 
 
-router.post("/",middlewareObj.isLoggedIn, function(req, res){
+router.post("/",middlewareObj.isLoggedIn, (req, res) => {
     // res.send("this is the post");
-    var name = req.body.name;
-    var image = req.body.image;
-    var price = req.body.price;
-    var desc = req.body.desc;
-    var author = {
-        id: req.user._id,
-        username: req.user.username
-    };
-    geocoder.geocode(req.body.location, function (err, data) {
+    const name = req.body.name,
+         image = req.body.image,
+         price = req.body.price,
+          desc = req.body.desc,
+        author = {
+                  id: req.user._id,
+                  username: req.user.username
+                };
+    geocoder.geocode(req.body.location,  (err, data) => {
         if(err || data.status === 'ZERO_RESULTS'){
             console.log(err);
             req.flash("error", "the given location doesn't exists");
-            res.redirect("/campgrounds/"+ req.params.id);
+            return res.redirect("/campgrounds/new");
         }else{
-                var lat = data.results[0].geometry.location.lat;
-                var lng = data.results[0].geometry.location.lng;
-                var location = data.results[0].formatted_address;
-                var newCamp = {name:name , image: image , price : price, description: desc, author: author, location: location, lat: lat, lng: lng};
-                Campgrounds.create(newCamp,function(err , camp){
+                let lat = data.results[0].geometry.location.lat,
+                    lng = data.results[0].geometry.location.lng,
+               location = data.results[0].formatted_address,
+                newCamp = {name:name , image: image , price : price, description: desc, author: author, location: location, lat: lat, lng: lng};
+                Campgrounds.create(newCamp, (err , camp) => {
                         if(err){
                             req.flash("error", "opps something went wrong");
                             console.log("opps there is something wrong :-(");
@@ -99,11 +99,11 @@ router.post("/",middlewareObj.isLoggedIn, function(req, res){
 });
 
 
-router.get("/new",middlewareObj.isLoggedIn, function(req ,res){
+router.get("/new",middlewareObj.isLoggedIn, (req ,res) => {
    res.render("campgrounds/new" ,{page: 'create'}); 
 });
 
-router.get("/:id", function(req,res){
+router.get("/:id", (req,res) => {
   Campgrounds.findById(req.params.id).populate("comments").exec(function(err , camp){
       if(err || !camp){
           req.flash("error", "The campground doesn't exists");
@@ -116,9 +116,9 @@ router.get("/:id", function(req,res){
     
 });
 
-router.get("/:id/edit",middlewareObj.checkCampOwnership,function(req, res){
+router.get("/:id/edit",middlewareObj.checkCampOwnership, (req, res) => {
     
-    Campgrounds.findById(req.params.id, function(err, camp){
+    Campgrounds.findById(req.params.id, (err, camp) => {
        if(err || !camp){
            res.redirect("/campgrounds");
        } else{
@@ -130,17 +130,17 @@ router.get("/:id/edit",middlewareObj.checkCampOwnership,function(req, res){
 });
 
 
-router.put("/:id",middlewareObj.checkCampOwnership, function(req , res){
-    geocoder.geocode(req.body.location, function (err, data) {
+router.put("/:id",middlewareObj.checkCampOwnership, (req , res) => {
+    geocoder.geocode(req.body.location,  (err, data) => {
         if(err || data.status === 'ZERO_RESULTS'){
             console.log(err);
             req.flash("error", "the given location doesn't exists");
-            res.redirect("/campgrounds/"+ req.params.id);
+            return res.redirect("/campgrounds/"+ req.params.id);
         }else{
-            var lat = data.results[0].geometry.location.lat;
-            var lng = data.results[0].geometry.location.lng;
-            var location = data.results[0].formatted_address;
-            var newData = {
+            let lat = data.results[0].geometry.location.lat,
+                lng = data.results[0].geometry.location.lng,
+           location = data.results[0].formatted_address,
+            newData = {
                 name: req.body.name, 
                 image: req.body.image, 
                 description: req.body.desc,
@@ -151,7 +151,7 @@ router.put("/:id",middlewareObj.checkCampOwnership, function(req , res){
                 lng: lng
                 
             };
-           Campgrounds.findByIdAndUpdate(req.params.id, newData, function(err, updatedcamp){
+           Campgrounds.findByIdAndUpdate(req.params.id, newData, (err, updatedcamp) => {
                if(err || !updatedcamp){
                    req.flash("error", err.message);
                    res.redirect("/campgrounds");
@@ -166,8 +166,8 @@ router.put("/:id",middlewareObj.checkCampOwnership, function(req , res){
 });
 
 
-router.delete("/:id",middlewareObj.isLoggedIn, middlewareObj.checkCampOwnership, function(req, res){
-  Campgrounds.findByIdAndRemove(req.params.id, function(err){
+router.delete("/:id",middlewareObj.isLoggedIn, middlewareObj.checkCampOwnership, (req, res) => {
+  Campgrounds.findByIdAndRemove(req.params.id, (err) => {
       if(err){
           req.flash("error", "OOPS, something went wrong");
           res.redirect("/campgrounds/"+req.params.id);
