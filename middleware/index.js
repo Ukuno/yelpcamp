@@ -1,9 +1,9 @@
-var Campgrounds = require("../models/camps");
-var Comment = require("../models/comments");
+const Campgrounds = require("../models/camps"),
+          Comment = require("../models/comments");
 
-var middlewareObj = {};
+const middlewareObj = {};
 
-middlewareObj.isLoggedIn = function(req,res, next){
+middlewareObj.isLoggedIn = (req,res, next) => {
     if(req.isAuthenticated()){
         return next();
     }
@@ -12,9 +12,9 @@ middlewareObj.isLoggedIn = function(req,res, next){
 }
 
 
-middlewareObj.checkCampOwnership = function(req,res, next){
+middlewareObj.checkCampOwnership = (req,res, next) => {
     if(req.isAuthenticated()){
-        Campgrounds.findById(req.params.id, function(err, foundcamp){
+        Campgrounds.findById(req.params.id, (err, foundcamp) => {
             if(err || !foundcamp){
                 req.flash("error", "Campground not found");
                 res.redirect("back");
@@ -34,9 +34,9 @@ middlewareObj.checkCampOwnership = function(req,res, next){
 }
 
 
-middlewareObj.checkCommentOwnership = function(req,res, next){
+middlewareObj.checkCommentOwnership = (req,res, next) => {
     if(req.isAuthenticated()){
-        Comment.findById(req.params.comment_id, function(err, foundcomment){
+        Comment.findById(req.params.comment_id, (err, foundcomment) =>{
             if(err || !foundcomment){
                 req.flash("error", "Comment not found");
                 res.redirect("back");
